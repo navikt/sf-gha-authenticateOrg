@@ -6,7 +6,7 @@ Github Action for authenticating a Salesforce org
 
 <!-- Start usage -->
 ```yaml
-- uses: actions/checkout@v4
+- uses: navikt/sf-gha-authenticateOrg@main
     with:
         # The auth URL for use with sf org login
         # Required: true
@@ -21,12 +21,12 @@ Github Action for authenticating a Salesforce org
         # Set the authenticated org as the default username that all commands run against.
         # Required: false
         # Default: false
-        setDefaultUsername: ''
+        set-default-username: ''
 
         # Set the authenticated org as the default dev hub org
         # Required: false
         # Default: false
-        setDefaultDevhubUsername: ''
+        set-default-devhub-username: ''
 ```
 <!-- end usage -->
 
