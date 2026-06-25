@@ -35,19 +35,18 @@ if [ -z "${AUTH_URL}" ]; then
     exit 1
 fi
 
-if ! echo "${AUTH_URL}" | "${sf_command[@]}" > loginResult.json 2>&1; then
-    echo "${red}${bold}Command failed with exit code $?${reset}"
-    if [ -f loginResult.json ]; then
-        cat loginResult.json
-    fi
-    echo "::error title=Failed to authenticate::Command execution failed"
+echo "${AUTH_URL}" | "${sf_command[@]}" > loginResult.json
+
+if ! jq -e . loginResult.json >/dev/null 2>&1; then
+    echo "::error title=Authentication failed::Login command did not return valid JSON"
+    cat loginResult.json || true
     exit 1
 fi
 
-status=$(jq -r '.status // 0' loginResult.json 2>/dev/null || echo "1")
+status="$(jq -r '.status // empty' loginResult.json)"
+message="$(jq -r '.message // "Unknown authentication error"' loginResult.json)"
 
-if [ "${status}" != "0" ]; then
-    message=$(jq -r '.message // "Unknown error"' loginResult.json 2>/dev/null || echo "Failed to parse error message")
+if [ "$status" != "0" ] || [ -z "$status" ]; then
     echo "::error title=Failed to authenticate::${message}"
     exit 1
 fi
